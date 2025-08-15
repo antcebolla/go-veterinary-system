@@ -1,7 +1,6 @@
 package models
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/antcebolla/web-server/src/utils"
@@ -27,11 +26,9 @@ func (vc *VeterinaryCenter) ValidateAndFormat() error {
 	vc.Address = strings.TrimSpace(vc.Address)
 	vc.Phone = strings.TrimSpace(vc.Phone)
 	if vc.Name == "" || vc.Address == "" {
-		fmt.Println("error on name or address")
 		return gorm.ErrInvalidData
 	}
 	if len(vc.Name) < minimal_name_length || len(vc.Address) < minimal_address_length {
-		fmt.Println("error on name or address length")
 		return gorm.ErrInvalidData
 	}
 	if !(utils.IsValidPhoneNumber(vc.Phone)) {
