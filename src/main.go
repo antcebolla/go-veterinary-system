@@ -45,6 +45,7 @@ func main() {
 		{
 			vetCenters.GET("/", controllers.GetAllVetCentersHandler) // GET ALL VETERINARIAN CENTERS
 			vetCenters.POST("/", controllers.CreateVetCenterHandler) // CREATE A VETERINARIAN CENTER
+			vetCenters.DELETE("/:id", controllers.DeleteCenterHandler) // DELETE A VETERINARIAN CENTER
 		}
 
 		r.Run()
