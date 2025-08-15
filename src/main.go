@@ -43,6 +43,7 @@ func main() {
 		// Veterinarian centers routes
 		vetCenters := r.Group("/centers", middlewares.AuthMiddleware())
 		{
+			vetCenters.GET("/", controllers.GetAllVetCentersHandler) // GET ALL VETERINARIAN CENTERS
 			vetCenters.POST("/", controllers.CreateVetCenterHandler) // CREATE A VETERINARIAN CENTER
 		}
 
