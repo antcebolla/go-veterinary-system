@@ -61,6 +61,54 @@ func CreateVetCenterHandler(c *gin.Context) {
 	c.JSON(http.StatusCreated, VetCenter)
 }
 
+func UpdateCenterByIdHandler(c *gin.Context) {
+	id := c.Param("id")
+	if id == "" {
+		c.JSON(http.StatusNotFound, gin.H{
+			"error": "Invalid veterinary center id",
+		})
+		return
+	}
+
+	var centerFromRequest models.VeterinaryCenter
+	err := c.ShouldBindJSON(&centerFromRequest)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Invalid request body",
+		})
+		return
+	}
+
+	var centerFromDB models.VeterinaryCenter
+	err = database.DB.First(&centerFromDB, id).Error
+	if err == gorm.ErrRecordNotFound {
+		c.JSON(http.StatusNotFound, gin.H{
+			"error": "Veterinary center not found",
+		})
+		return
+	}
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Failed to update veterinary center, invalid id",
+		})
+		return
+	}
+
+	centerFromDB.Name = centerFromRequest.Name
+	centerFromDB.Address = centerFromRequest.Address
+	centerFromDB.Phone = centerFromRequest.Phone
+
+	err = database.DB.Save(&centerFromDB).Error
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Failed to update veterinary center, bad request",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, centerFromDB)
+}
+
 func DeleteCenterHandler(c *gin.Context) {
 	id := c.Param("id")
 	if id == "" {
