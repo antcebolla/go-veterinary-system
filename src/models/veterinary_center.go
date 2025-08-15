@@ -40,3 +40,7 @@ func (vc *VeterinaryCenter) ValidateAndFormat() error {
 func (vc *VeterinaryCenter) BeforeSave(tx *gorm.DB) error {
 	return vc.ValidateAndFormat()
 }
+
+func (vc *VeterinaryCenter) BeforeUpdate(tx *gorm.DB) error {
+	return vc.ValidateAndFormat()
+}

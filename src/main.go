@@ -43,8 +43,11 @@ func main() {
 		// Veterinarian centers routes
 		vetCenters := r.Group("/centers", middlewares.AuthMiddleware())
 		{
-			vetCenters.GET("/", controllers.GetAllVetCentersHandler) // GET ALL VETERINARIAN CENTERS
-			vetCenters.POST("/", controllers.CreateVetCenterHandler) // CREATE A VETERINARIAN CENTER
+			vetCenters.GET("/", controllers.GetAllVetCentersHandler)             // GET ALL VETERINARIAN CENTERS
+			vetCenters.GET("/:id", controllers.GetVeterinarianCenterByIdHandler) // GET A VETERINARIAN CENTER
+			vetCenters.POST("/", controllers.CreateVetCenterHandler)             // CREATE A VETERINARIAN CENTER
+			vetCenters.DELETE("/:id", controllers.DeleteCenterHandler)           // DELETE A VETERINARIAN CENTER
+			vetCenters.PUT("/:id", controllers.UpdateCenterByIdHandler)          // UPDATE A VETERINARIAN CENTER
 		}
 
 		r.Run()
