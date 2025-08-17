@@ -5,16 +5,29 @@ import (
 
 	"github.com/antcebolla/web-server/src/database"
 	"github.com/antcebolla/web-server/src/models"
+	"github.com/antcebolla/web-server/src/types"
 	"github.com/antcebolla/web-server/src/utils"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
 func GetAllVetCentersHandler(c *gin.Context) {
-	offset, limit, _ := utils.GetPagination(c)
+	offset, limit, current_page, page_size := utils.GetPagination(c)
 	var VetCenters []models.VeterinaryCenter
-	database.DB.Offset(offset).Limit(limit).Find(&VetCenters)
-	c.JSON(http.StatusOK, VetCenters)
+	database.DB.Offset(offset).Limit(limit + 1).Find(&VetCenters)
+
+
+	has_next_page := len(VetCenters) > page_size
+	if has_next_page {
+		VetCenters = VetCenters[:page_size]
+	}
+
+	c.JSON(http.StatusOK, types.PaginatedResponse[models.VeterinaryCenter]{
+		Items:       VetCenters,
+		HasNextPage: has_next_page,
+		CurrentPage: current_page,
+		IsFirstPage: current_page == 1,
+	})
 }
 
 func GetVeterinarianCenterByIdHandler(c *gin.Context) {

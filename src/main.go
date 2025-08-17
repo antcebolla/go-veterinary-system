@@ -32,22 +32,26 @@ func main() {
 	default:
 		r := gin.Default()
 
-		r.GET("/", middlewares.AuthMiddleware(), controllers.HomeHandler)
-
 		// Species routes
-		species := r.Group("/species", middlewares.AuthMiddleware())
+		speciesRouter := r.Group("/species", middlewares.AuthMiddleware())
 		{
-			species.GET("/", controllers.GetAllSpeciesHandler) // GET ALL SPECIES
+			speciesRouter.GET("/", controllers.GetAllSpeciesHandler) // GET ALL SPECIES
 		}
 
 		// Veterinarian centers routes
-		vetCenters := r.Group("/centers", middlewares.AuthMiddleware())
+		vetCentersRouter := r.Group("/centers", middlewares.AuthMiddleware())
 		{
-			vetCenters.GET("/", controllers.GetAllVetCentersHandler)             // GET ALL VETERINARIAN CENTERS
-			vetCenters.GET("/:id", controllers.GetVeterinarianCenterByIdHandler) // GET A VETERINARIAN CENTER
-			vetCenters.POST("/", controllers.CreateVetCenterHandler)             // CREATE A VETERINARIAN CENTER
-			vetCenters.DELETE("/:id", controllers.DeleteCenterHandler)           // DELETE A VETERINARIAN CENTER
-			vetCenters.PUT("/:id", controllers.UpdateCenterByIdHandler)          // UPDATE A VETERINARIAN CENTER
+			vetCentersRouter.GET("/", controllers.GetAllVetCentersHandler)             // GET ALL VETERINARIAN CENTERS
+			vetCentersRouter.GET("/:id", controllers.GetVeterinarianCenterByIdHandler) // GET A VETERINARIAN CENTER
+			vetCentersRouter.POST("/", controllers.CreateVetCenterHandler)             // CREATE A VETERINARIAN CENTER
+			vetCentersRouter.DELETE("/:id", controllers.DeleteCenterHandler)           // DELETE A VETERINARIAN CENTER
+			vetCentersRouter.PUT("/:id", controllers.UpdateCenterByIdHandler)          // UPDATE A VETERINARIAN CENTER
+		}
+
+		// veterinarians routes
+		veterinariansRouter := r.Group("/veterinarians", middlewares.AuthMiddleware())
+		{
+			veterinariansRouter.GET("/", controllers.GetAllVeterinariansHandler)
 		}
 
 		r.Run()

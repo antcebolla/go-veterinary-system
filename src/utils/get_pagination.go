@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func GetPagination(c *gin.Context) (int, int, int) {
+func GetPagination(c *gin.Context) (int, int, int, int) {
 	const DEFAULT_PAGE = 1
 	const INSTANCES_PER_PAGE = 10
 	var page int
@@ -19,5 +19,5 @@ func GetPagination(c *gin.Context) (int, int, int) {
 	offset := (page - 1) * INSTANCES_PER_PAGE
 	limit := offset + INSTANCES_PER_PAGE
 
-	return offset, limit, page
+	return offset, limit, page, INSTANCES_PER_PAGE
 }
