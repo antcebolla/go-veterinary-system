@@ -3,16 +3,17 @@ package models
 import (
 	"strings"
 
+	"github.com/antcebolla/web-server/src/database"
 	"github.com/antcebolla/web-server/src/utils"
 	"gorm.io/gorm"
 )
 
 type Veterinarian struct {
 	gorm.Model
-	Name               string `json:"name" gorm:"not null"`
-	Email              string `json:"email" gorm:"not null"`
-	Phone              string `json:"phone" gorm:"not null"`
-	VeterinaryCenterID uint
+	Name               string        `json:"name" gorm:"not null"`
+	Email              string        `json:"email" gorm:"not null"`
+	Phone              string        `json:"phone" gorm:"not null"`
+	VeterinaryCenterID uint          `json:"veterinary_center_id" gorm:"not null"`
 	Appointments       []Appointment `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 }
 
@@ -37,9 +38,19 @@ func (v *Veterinarian) ValidateAndFormat() error {
 		return gorm.ErrInvalidData
 	}
 
+	var center VeterinaryCenter
+	err := database.DB.First(&center, v.VeterinaryCenterID).Error
+	if err != nil {
+		return gorm.ErrInvalidData
+	}
+
 	return nil
 }
 
 func (v *Veterinarian) BeforeSave(tx *gorm.DB) error {
+	return v.ValidateAndFormat()
+}
+
+func (v *Veterinarian) BeforeUpdate(tx *gorm.DB) error {
 	return v.ValidateAndFormat()
 }
