@@ -42,7 +42,7 @@ func main() {
 		vetCentersRouter := r.Group("/centers", middlewares.AuthMiddleware())
 		{
 			vetCentersRouter.GET("/", controllers.GetAllVetCentersHandler)             // GET ALL VETERINARIAN CENTERS
-			vetCentersRouter.GET("/:id", controllers.GetVeterinarianCenterByIdHandler) // GET A VETERINARIAN CENTER
+			vetCentersRouter.GET("/:id", controllers.GetVeterinarianCenterByIdHandler) // GET A VETERINARIAN CENTER BY ID
 			vetCentersRouter.POST("/", controllers.CreateVetCenterHandler)             // CREATE A VETERINARIAN CENTER
 			vetCentersRouter.DELETE("/:id", controllers.DeleteCenterHandler)           // DELETE A VETERINARIAN CENTER
 			vetCentersRouter.PUT("/:id", controllers.UpdateCenterByIdHandler)          // UPDATE A VETERINARIAN CENTER
@@ -51,7 +51,11 @@ func main() {
 		// veterinarians routes
 		veterinariansRouter := r.Group("/veterinarians", middlewares.AuthMiddleware())
 		{
-			veterinariansRouter.GET("/", controllers.GetAllVeterinariansHandler)
+			veterinariansRouter.GET("/", controllers.GetAllVeterinariansHandler)          // GET ALL VETERINARIANS
+			veterinariansRouter.GET("/:id", controllers.GetVeterinarianByIdHandler)       // GET A VETERINARIAN BY ID
+			veterinariansRouter.POST("/", controllers.CreateVeterinarianHandler)          // CREATE A VETERIARIAN
+			veterinariansRouter.DELETE("/:id", controllers.DeleteVeterinarianByIdHandler) // DELETE A VETERINARY BY ID
+			veterinariansRouter.PUT("/:id", controllers.UpdateVeterinarianByIdHandler)    // UPDATE A VETERINARY BY ID
 		}
 
 		r.Run()

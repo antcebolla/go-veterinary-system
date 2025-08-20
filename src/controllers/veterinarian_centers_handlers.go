@@ -13,17 +13,16 @@ import (
 
 func GetAllVetCentersHandler(c *gin.Context) {
 	offset, limit, current_page, page_size := utils.GetPagination(c)
-	var VetCenters []models.VeterinaryCenter
-	database.DB.Offset(offset).Limit(limit + 1).Find(&VetCenters)
+	var vetCenters []models.VeterinaryCenter
+	database.DB.Offset(offset).Limit(limit + 1).Find(&vetCenters)
 
-
-	has_next_page := len(VetCenters) > page_size
+	has_next_page := len(vetCenters) > page_size
 	if has_next_page {
-		VetCenters = VetCenters[:page_size]
+		vetCenters = vetCenters[:page_size]
 	}
 
 	c.JSON(http.StatusOK, types.PaginatedResponse[models.VeterinaryCenter]{
-		Items:       VetCenters,
+		Items:       vetCenters,
 		HasNextPage: has_next_page,
 		CurrentPage: current_page,
 		IsFirstPage: current_page == 1,
@@ -39,18 +38,19 @@ func GetVeterinarianCenterByIdHandler(c *gin.Context) {
 		return
 	}
 
-	center := models.VeterinaryCenter{}
+	var center models.VeterinaryCenter
 	err := database.DB.First(&center, id).Error
-	if err == gorm.ErrRecordNotFound {
-		c.JSON(http.StatusNotFound, gin.H{
-			"error": "Veterinary center not found",
-		})
-		return
-	}
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "Failed to get veterinary center, invalid id",
-		})
+		switch err {
+		case gorm.ErrRecordNotFound:
+			c.JSON(http.StatusNotFound, gin.H{
+				"error": "center not found",
+			})
+		default:
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": "error, the id provided is not valid",
+			})
+		}
 		return
 	}
 
@@ -96,16 +96,17 @@ func UpdateCenterByIdHandler(c *gin.Context) {
 
 	var centerFromDB models.VeterinaryCenter
 	err = database.DB.First(&centerFromDB, id).Error
-	if err == gorm.ErrRecordNotFound {
-		c.JSON(http.StatusNotFound, gin.H{
-			"error": "Veterinary center not found",
-		})
-		return
-	}
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "Failed to update veterinary center, invalid id",
-		})
+		switch err {
+		case gorm.ErrRecordNotFound:
+			c.JSON(http.StatusNotFound, gin.H{
+				"error": "center not found",
+			})
+		default:
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": "error, the id provided is not valid",
+			})
+		}
 		return
 	}
 
@@ -135,16 +136,17 @@ func DeleteCenterHandler(c *gin.Context) {
 
 	center := models.VeterinaryCenter{}
 	err := database.DB.First(&center, id).Error
-	if err == gorm.ErrRecordNotFound {
-		c.JSON(http.StatusNotFound, gin.H{
-			"error": "Veterinary center not found",
-		})
-		return
-	}
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "Failed to delete veterinary center, invalid id",
-		})
+		switch err {
+		case gorm.ErrRecordNotFound:
+			c.JSON(http.StatusNotFound, gin.H{
+				"error": "center not found",
+			})
+		default:
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": "error, the id provided is not valid",
+			})
+		}
 		return
 	}
 
