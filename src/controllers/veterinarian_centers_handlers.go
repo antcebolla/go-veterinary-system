@@ -76,6 +76,44 @@ func CreateVetCenterHandler(c *gin.Context) {
 	c.JSON(http.StatusCreated, VetCenter)
 }
 
+func DeleteCenterHandler(c *gin.Context) {
+	id := c.Param("id")
+	if id == "" {
+		c.JSON(http.StatusNotFound, gin.H{
+			"error": "Invalid veterinary center id",
+		})
+		return
+	}
+
+	center := models.VeterinaryCenter{}
+	err := database.DB.First(&center, id).Error
+	if err != nil {
+		switch err {
+		case gorm.ErrRecordNotFound:
+			c.JSON(http.StatusNotFound, gin.H{
+				"error": "center not found",
+			})
+		default:
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": "error, the id provided is not valid",
+			})
+		}
+		return
+	}
+
+	err = database.DB.Delete(&center).Error
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Failed to delete veterinary center",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Veterinary center deleted successfully",
+	})
+}
+
 func UpdateCenterByIdHandler(c *gin.Context) {
 	id := c.Param("id")
 	if id == "" {
@@ -123,42 +161,4 @@ func UpdateCenterByIdHandler(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, centerFromDB)
-}
-
-func DeleteCenterHandler(c *gin.Context) {
-	id := c.Param("id")
-	if id == "" {
-		c.JSON(http.StatusNotFound, gin.H{
-			"error": "Invalid veterinary center id",
-		})
-		return
-	}
-
-	center := models.VeterinaryCenter{}
-	err := database.DB.First(&center, id).Error
-	if err != nil {
-		switch err {
-		case gorm.ErrRecordNotFound:
-			c.JSON(http.StatusNotFound, gin.H{
-				"error": "center not found",
-			})
-		default:
-			c.JSON(http.StatusBadRequest, gin.H{
-				"error": "error, the id provided is not valid",
-			})
-		}
-		return
-	}
-
-	err = database.DB.Delete(&center).Error
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": "Failed to delete veterinary center",
-		})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"message": "Veterinary center deleted successfully",
-	})
 }
