@@ -1,8 +1,8 @@
 package controllers
 
 import (
-	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/antcebolla/web-server/src/database"
 	"github.com/antcebolla/web-server/src/models"
@@ -13,10 +13,25 @@ import (
 )
 
 func GetAllVeterinariansHandler(c *gin.Context) {
-	limit, offset, current_page, page_size := utils.GetPagination(c)
+	offset, limit, current_page, page_size := utils.GetPagination(c)
+
+	centerIdParam := c.Param("center_id")
+	if centerIdParam == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "center id is required",
+		})
+		return
+	}
+	center_id, err := strconv.ParseUint(centerIdParam, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "center id is invalid",
+		})
+		return
+	}
 
 	var vets []models.Veterinarian
-	database.DB.Offset(offset).Limit(limit + 1).Find(&vets)
+	database.DB.Where(&models.Veterinarian{VeterinaryCenterID: uint(center_id)}).Offset(offset).Limit(limit + 1).Find(&vets)
 
 	has_next_page := len(vets) > page_size
 	if has_next_page {
@@ -32,7 +47,7 @@ func GetAllVeterinariansHandler(c *gin.Context) {
 }
 
 func GetVeterinarianByIdHandler(c *gin.Context) {
-	id := c.Param("id")
+	id := c.Param("vet_id")
 	if id == "" {
 		c.JSON(http.StatusNotFound, gin.H{
 			"error": "Invalid veterinarian id",
@@ -81,7 +96,7 @@ func CreateVeterinarianHandler(c *gin.Context) {
 }
 
 func DeleteVeterinarianByIdHandler(c *gin.Context) {
-	id := c.Param("id")
+	id := c.Param("vet_id")
 	if id == "" {
 		c.JSON(http.StatusNotFound, gin.H{
 			"error": "Invalid veterinarian id",
@@ -119,7 +134,7 @@ func DeleteVeterinarianByIdHandler(c *gin.Context) {
 }
 
 func UpdateVeterinarianByIdHandler(c *gin.Context) {
-	id := c.Param("id")
+	id := c.Param("vet_id")
 	if id == "" {
 		c.JSON(http.StatusNotFound, gin.H{
 			"error": "Invalid veterinarian id",
@@ -159,7 +174,6 @@ func UpdateVeterinarianByIdHandler(c *gin.Context) {
 
 	err = database.DB.Save(&vetFromDB).Error
 	if err != nil {
-		fmt.Printf("%v", err)
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "error while updating the veterinarian",
 		})

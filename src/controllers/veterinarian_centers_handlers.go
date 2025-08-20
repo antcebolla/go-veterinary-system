@@ -30,7 +30,7 @@ func GetAllVetCentersHandler(c *gin.Context) {
 }
 
 func GetVeterinarianCenterByIdHandler(c *gin.Context) {
-	id := c.Param("id")
+	id := c.Param("center_id")
 	if id == "" {
 		c.JSON(http.StatusNotFound, gin.H{
 			"error": "Invalid veterinary center id",
@@ -77,7 +77,7 @@ func CreateVetCenterHandler(c *gin.Context) {
 }
 
 func DeleteCenterHandler(c *gin.Context) {
-	id := c.Param("id")
+	id := c.Param("center_id")
 	if id == "" {
 		c.JSON(http.StatusNotFound, gin.H{
 			"error": "Invalid veterinary center id",
@@ -115,7 +115,7 @@ func DeleteCenterHandler(c *gin.Context) {
 }
 
 func UpdateCenterByIdHandler(c *gin.Context) {
-	id := c.Param("id")
+	id := c.Param("center_id")
 	if id == "" {
 		c.JSON(http.StatusNotFound, gin.H{
 			"error": "Invalid veterinary center id",

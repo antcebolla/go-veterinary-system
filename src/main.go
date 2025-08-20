@@ -41,21 +41,21 @@ func main() {
 		// Veterinarian centers routes
 		vetCentersRouter := r.Group("/centers", middlewares.AuthMiddleware())
 		{
-			vetCentersRouter.GET("/", controllers.GetAllVetCentersHandler)             // GET ALL VETERINARIAN CENTERS
-			vetCentersRouter.GET("/:id", controllers.GetVeterinarianCenterByIdHandler) // GET A VETERINARIAN CENTER BY ID
-			vetCentersRouter.POST("/", controllers.CreateVetCenterHandler)             // CREATE A VETERINARIAN CENTER
-			vetCentersRouter.DELETE("/:id", controllers.DeleteCenterHandler)           // DELETE A VETERINARIAN CENTER
-			vetCentersRouter.PUT("/:id", controllers.UpdateCenterByIdHandler)          // UPDATE A VETERINARIAN CENTER
-		}
+			vetCentersRouter.GET("/", controllers.GetAllVetCentersHandler)                    // GET ALL VETERINARIAN CENTERS
+			vetCentersRouter.GET("/:center_id", controllers.GetVeterinarianCenterByIdHandler) // GET A VETERINARIAN CENTER BY ID
+			vetCentersRouter.POST("/", controllers.CreateVetCenterHandler)                    // CREATE A VETERINARIAN CENTER
+			vetCentersRouter.DELETE("/:center_id", controllers.DeleteCenterHandler)           // DELETE A VETERINARIAN CENTER
+			vetCentersRouter.PUT("/:center_id", controllers.UpdateCenterByIdHandler)          // UPDATE A VETERINARIAN CENTER
 
-		// veterinarians routes
-		veterinariansRouter := r.Group("/veterinarians", middlewares.AuthMiddleware())
-		{
-			veterinariansRouter.GET("/", controllers.GetAllVeterinariansHandler)          // GET ALL VETERINARIANS
-			veterinariansRouter.GET("/:id", controllers.GetVeterinarianByIdHandler)       // GET A VETERINARIAN BY ID
-			veterinariansRouter.POST("/", controllers.CreateVeterinarianHandler)          // CREATE A VETERIARIAN
-			veterinariansRouter.DELETE("/:id", controllers.DeleteVeterinarianByIdHandler) // DELETE A VETERINARY BY ID
-			veterinariansRouter.PUT("/:id", controllers.UpdateVeterinarianByIdHandler)    // UPDATE A VETERINARY BY ID
+			// Veterinarians routes
+			veterinariansRouter := vetCentersRouter.Group("/:center_id/veterinarians")
+			{
+				veterinariansRouter.GET("/", controllers.GetAllVeterinariansHandler)              // GET ALL VETERINARIANS
+				veterinariansRouter.GET("/:vet_id", controllers.GetVeterinarianByIdHandler)       // GET A VETERINARIAN BY ID
+				veterinariansRouter.POST("/", controllers.CreateVeterinarianHandler)              // CREATE A VETERINARIAN
+				veterinariansRouter.DELETE("/:vet_id", controllers.DeleteVeterinarianByIdHandler) // DELETE A VETERINARIAN
+				veterinariansRouter.PUT("/:vet_id", controllers.UpdateVeterinarianByIdHandler)    // UPDATE A VETERINARIAN
+			}
 		}
 
 		r.Run()
